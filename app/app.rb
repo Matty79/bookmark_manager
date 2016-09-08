@@ -1,20 +1,29 @@
 ENV["RACK_ENV"] ||= "development"
 require 'sinatra/base'
+require 'sinatra/flash'
 require_relative 'data_mapper_setup'
 
 class Bookmark < Sinatra::Base
+
+  register Sinatra::Flash
 
   enable :sessions
   set :session_secret, 'super secret'
 
   get '/sign_up' do
+    @user = User.new
     erb :'users/sign_up'
   end
 
-  post '/add-user' do
-    user = User.create(email: params[:email], password: params[:password], password_confirmation: params[:password_confirmation])
-    session[:user_id] = user.id
-    redirect '/links'
+  post '/sign_up' do
+    @user = User.new(email: params[:email], password: params[:password], password_confirmation: params[:password_confirmation])
+    if @user.save
+      session[:user_id] = @user.id
+      redirect '/links'
+    else
+      flash.now[:notice] = "Passwords do not match"
+      erb :'users/sign_up'
+    end
   end
 
   helpers do
@@ -32,14 +41,14 @@ class Bookmark < Sinatra::Base
     erb :'links/new'
   end
 
-post '/add-link' do
-  link = Link.new(:title => params[:title], :url => params[:url])
-  params[:tag].split(", ").each do |tag|
-    link.tags << Tag.create(name: tag)
+  post '/add-link' do
+    link = Link.new(:title => params[:title], :url => params[:url])
+    params[:tag].split(", ").each do |tag|
+      link.tags << Tag.create(name: tag)
+    end
+    link.save
+    redirect '/links'
   end
-  link.save
-  redirect '/links'
-end
 
   get '/tags/:name' do
     tag = Tag.all(name: params[:name])
