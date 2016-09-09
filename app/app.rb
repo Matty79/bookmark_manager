@@ -26,6 +26,19 @@ class Bookmark < Sinatra::Base
     end
   end
 
+  get '/sign_in' do
+    @user = User.new
+    erb :'users/sign_in'
+  end
+
+  post '/sign_in' do
+    @user = User.first(email: params[:email])
+    session[:user_id] = @user.id
+
+    redirect '/links'
+  end
+
+
   helpers do
     def current_user
       @current_user ||= User.get(session[:user_id])

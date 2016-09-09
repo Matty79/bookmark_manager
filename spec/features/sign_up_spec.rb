@@ -1,12 +1,9 @@
 require 'spec_helper'
 
 feature 'let a user sign up' do
+
   scenario 'a user signs up on the /sign_up page' do
-    visit '/sign_up'
-    fill_in('email', with: 'joseph@coffeenutcase.com')
-    fill_in('password', with: 'iamjoseph')
-    fill_in('password_confirmation', with: 'iamjoseph')
-    click_button('Sign Up')
+    sign_up(email: 'joseph@coffeenutcase.com', password: 'iamjoseph', password_confirmation: 'iamjoseph')
     expect(page).to have_content('Welcome joseph@coffeenutcase.com')
     expect(User.first.email).to eq('joseph@coffeenutcase.com')
     expect(User.count).to eq(1)

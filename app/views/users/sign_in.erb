@@ -1,6 +1,6 @@
-<h1>Sign Up</h1>
+<h1>Please sign in</h1>
 
-<form action="/sign_up" method="post">
+<form action="/sign_in" method="post">
   <label for="email">
     Email:
     <input type="email" name="email" value='<%= @user.email %>' required>
@@ -13,5 +13,5 @@
       Confirm Password:
       <input type="password" name="password_confirmation">
   </label>
-  <button type="submit">Sign Up</button>
+  <button type="submit">Sign in</button>
 <form/>
