@@ -20,7 +20,7 @@ feature 'let a user sign up' do
     click_button('Sign Up')
     expect(User.count).to eq(0)
     expect(page).to have_current_path("/sign_up")
-    expect(page).to have_content("Passwords do not match")
+    expect(page).to have_content("Password does not match the confirmation")
   end
 
   scenario 'user can not sign up with a blank email address' do
@@ -29,8 +29,24 @@ feature 'let a user sign up' do
     fill_in('password', with: 'asdf')
     fill_in('password_confirmation', with: 'asdf')
     click_button('Sign Up')
-
+    expect(page).to have_content("Email must not be blank")
     expect(User.count).to eq(0)
+    expect(page).to have_current_path("/sign_up")
+  end
+
+  scenario 'user can not sign up with a blank email address' do
+    visit '/sign_up'
+    fill_in('email', with: 'matt@matt.com')
+    fill_in('password', with: 'asdf')
+    fill_in('password_confirmation', with: 'asdf')
+    click_button('Sign Up')
+    visit '/sign_up'
+    fill_in('email', with: 'matt@matt.com')
+    fill_in('password', with: 'asdf')
+    fill_in('password_confirmation', with: 'asdf')
+    click_button('Sign Up')
+    expect(page).to have_content("Email is already taken")
+    expect(User.count).to eq(1)
     expect(page).to have_current_path("/sign_up")
   end
 end
