@@ -32,10 +32,14 @@ class Bookmark < Sinatra::Base
   end
 
   post '/sign_in' do
-    @user = User.first(email: params[:email])
-    session[:user_id] = @user.id
-
-    redirect '/links'
+    user = User.authenticate(params[:email], params[:password])
+    if user
+      session[:user_id] = user.id
+      redirect '/links'
+    else
+      flash.now[:errors] = @user.errors.full_messages
+      erb :'users/sign_in'
+    end
   end
 
 
